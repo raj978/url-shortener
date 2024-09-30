@@ -1,0 +1,11 @@
+
+### Create Link Request
+POST http://localhost:3000/api/create-link
+Content-Type: application/json
+api-key: akjf75Yk34GjhfdsAGDVDHyg
+
+{
+  "link": "https://slothbytes.beehiiv.com/p/tech-stacks"
+}
+
+###
