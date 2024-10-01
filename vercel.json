@@ -1,12 +1,8 @@
 {
   "functions": {
-    "app/api/create=link/route.ts": {
+    "app/api/**/**": {
       "memory": 3008,
-      "maxDuration": 60
-    },
-    "app/api/create-link/hello.ts": {
-      "memory": 1024,
-      "maxDuration": 30
+      "maxDuration": 50
     }
   }
 }
