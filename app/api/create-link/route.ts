@@ -59,20 +59,3 @@ export async function POST(
         }, { status: 500 });
     }
 }
-
-// import { NextApiRequest, NextApiResponse } from 'next';
-//
-// export default function handler(req: NextApiRequest, res: NextApiResponse) {
-//     if (req.method === 'POST') {
-//         const { link } = req.body;
-//         if (!link) {
-//             return res.status(400).json({ error: 'Link is required' });
-//         }
-//         // Logic to create a shortened URL
-//         const shortUrl = 'shortened-url'; // Replace with actual logic
-//         return res.status(201).json({ data: { shortUrl, link } });
-//     } else {
-//         res.setHeader('Allow', ['POST']);
-//         res.status(405).end(`Method ${req.method} Not Allowed`);
-//     }
-// }
