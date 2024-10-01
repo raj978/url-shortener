@@ -1,4 +1,3 @@
-
 import { Db, MongoClient } from "mongodb";
 import { formatLog} from "@/lib/utils";
 
@@ -8,21 +7,20 @@ let cachedDB: Db | null = null;
 // A function for connecting to MongoDB,
 export default async function connectToDatabase(): Promise<Db> {
     // If the database connection is cached, use it instead of creating a new connection
-    if (cachedDB) {
-        console.info(formatLog("Using cached client!"));
+    try {
+        if (cachedDB) {
+            console.info(formatLog("Using cached client!"));
+            return cachedDB;
+        }
+        console.info(formatLog("No client found! Creating a new one."));
+        // If no connection is cached, create a new one
+        const client = new MongoClient(process.env.ATLAS_URI_PROD as string);
+        await client.connect();
+        const db: Db = client.db(process.env.DB_NAME);
+        cachedDB = db;
         return cachedDB;
+    } catch (error) {
+        console.error(formatLog(`Error connecting to database: ${error}`));
+        throw new Error("Failed to connect to the database");
     }
-    // Unnecessary options that are no longer required on latest mongodb driver
-    // const opts = {
-    //     useNewUrlParser: true,
-    //     useUnifiedTopology: true,
-    // };
-    console.info(formatLog("No client found! Creating a new one."));
-    // If no connection is cached, create a new one
-
-    const client = new MongoClient(process.env.ATLAS_URI_PROD as string);
-    await client.connect();
-    const db: Db = client.db(process.env.DB_NAME);
-    cachedDB = db;
-    return cachedDB;
 }

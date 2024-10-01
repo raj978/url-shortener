@@ -53,9 +53,9 @@ export async function POST(
         }, { status: 201 });
     } catch (e: any) {
         return NextResponse.json({
-            code: 500,
+            code: 505,
             type: "error",
             message: e.message,
-        }, { status: 500 });
+        }, { status: 505 });
     }
 }
