@@ -1,11 +1,11 @@
 
 ### Create Link Request
-POST http://localhost:3000/api/create-link
+POST http://url-shortener-4v570k0yz-raj978s-projects.vercel.app/api/create-link
 Content-Type: application/json
 api-key: akjf75Yk34GjhfdsAGDVDHyg
 
 {
-  "link": "https://slothbytes.beehiiv.com/p/tech-stacks"
+  "link": "https://www.glassdoor.com/Jobs/Zoox-Jobs-E1159617.htm"
 }
 
 ###
