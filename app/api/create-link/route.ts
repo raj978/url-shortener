@@ -31,10 +31,12 @@ export async function POST(
         const database = await connectToDatabase();
         const urlInfoCollection = database.collection(COLLECTION_NAMES["url-info"]);
         const hash = getHash();
+        console.log(hash);
         const linkExists = await urlInfoCollection.findOne({
             link,
         });
         const shortUrl = `${process.env.HOST}/${hash}`;
+        console.log(shortUrl);
         if (!linkExists) {
             await urlInfoCollection.insertOne({
                 link,
