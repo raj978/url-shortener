@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from 'react'
-import { UrlForm} from "@/app/url-form";
-import { UrlCard} from "@/app/url-card";
-import { Footer } from './Footer'
+import { useState } from 'react';
+import { UrlForm } from "@/app/url-form";
+import { UrlCard } from "@/app/url-card";
+import { Footer } from './Footer';
 
 interface ShortUrl {
     id: string
@@ -12,18 +12,50 @@ interface ShortUrl {
     alias: string
 }
 
+const LoadingScreen = () => (
+    <div className="flex items-center justify-center bg-gray-900 text-gray-100">
+        <div className="text-center">
+            <div className="loader"></div>
+            <p>Loading...</p>
+        </div>
+    </div>
+)
+
 export default function EnhancedUrlShortener() {
     const [shortUrls, setShortUrls] = useState<ShortUrl[]>([])
+    const [loading, setLoading] = useState(false)
 
-    const handleSubmit = (longUrl: string, alias: string) => {
-        const newShortUrl: ShortUrl = {
-            id: Date.now().toString(),
-            longUrl,
-            shortUrl: `https://short.url/${alias || Math.random().toString(36).substr(2, 6)}`,
-            alias: alias || '',
+    const handleSubmit = async (longUrl: string, alias: string) => {
+        setLoading(true)
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/submit-url`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ link: longUrl, alias })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to create short URL');
+            }
+
+            const out = await response.json();
+            console.log(out.data.data.shortUrl);
+            console.log("data:", out);
+            const newShortUrl: ShortUrl = {
+                id: Date.now().toString(),
+                longUrl,
+                shortUrl: out.data.data.shortUrl,
+                alias: alias || '',
+            }
+            console.log("newShortUrl:", newShortUrl);
+            setShortUrls(prev => [newShortUrl, ...prev]);
+        } catch (error) {
+            console.error('Error creating short URL:', error);
+        } finally {
+            setLoading(false);
         }
-
-        setShortUrls(prev => [newShortUrl, ...prev])
     }
 
     return (
@@ -33,11 +65,15 @@ export default function EnhancedUrlShortener() {
 
                 <UrlForm onSubmit={handleSubmit} />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {shortUrls.map(url => (
-                        <UrlCard key={url.id} {...url} />
-                    ))}
-                </div>
+                {loading && <LoadingScreen />}
+
+                {!loading && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {shortUrls.map(url => (
+                            <UrlCard key={url.id} {...url} />
+                        ))}
+                    </div>
+                )}
             </div>
             <Footer />
         </div>

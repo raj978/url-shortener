@@ -1,11 +1,11 @@
 
 ### Create Link Request
-POST http://url-shortener-4v570k0yz-raj978s-projects.vercel.app/api/create-link
+POST http://localhost:3001/api/create-link
 Content-Type: application/json
 api-key: akjf75Yk34GjhfdsAGDVDHyg
 
 {
-  "link": "https://www.glassdoor.com/Jobs/Zoox-Jobs-E1159617.htm"
+  "link": "https://sports.yahoo.com/arkansas-comes-back-from-11-point-deficit-to-upset-no-4-tennessee-032557609.html"
 }
 
 ###
