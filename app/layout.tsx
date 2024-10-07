@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -18,6 +19,10 @@ export const metadata: Metadata = {
   description: "app for shortening urls and sharing them, built using Next.js with links persisted in MongoDB.",
 };
 
+function Toaster(props: { position: string }) {
+  return null;
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -29,6 +34,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        <Analytics />
+        <Toaster position="bottom-center" />
       </body>
     </html>
   );

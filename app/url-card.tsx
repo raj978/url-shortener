@@ -5,6 +5,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Copy, QrCode, Download } from "lucide-react"
 import { QRCode } from 'react-qrcode-logo'
 import { Input } from "@/components/ui/input"
+import {sendEmail} from "@/email/send-email";
+import { toast, ToastContainer } from 'react-toastify';
 
 interface UrlCardProps {
   longUrl: string
@@ -29,50 +31,17 @@ export function UrlCard({ longUrl, shortUrl, alias }: UrlCardProps) {
     return index === -1 ? url : url.substring(0, index)
   }
 
-  const downloadQRCode = () => {
-    if (qrRef.current) {
-      const svg = qrRef.current.querySelector('svg')
-      if (svg) {
-        const svgData = new XMLSerializer().serializeToString(svg)
-        const canvas = document.createElement('canvas')
-        const ctx = canvas.getContext('2d')
-        const img = new Image()
-        img.onload = () => {
-          canvas.width = img.width
-          canvas.height = img.height
-          ctx?.drawImage(img, 0, 0)
-          const pngFile = canvas.toDataURL('image/png')
-          const downloadLink = document.createElement('a')
-          downloadLink.href = pngFile
-          downloadLink.download = 'qrcode.png'
-          document.body.appendChild(downloadLink)
-          downloadLink.click()
-          document.body.removeChild(downloadLink)
-        }
-        img.src = 'data:image/svg+xml;base64,' + window.btoa(svgData);
-      }
+  // Function to handle the download of the QR code
+  const handleDownload = () => {
+    const qrCanvas = qrRef.current?.querySelector('canvas');
+    if (qrCanvas) {
+      const image = qrCanvas.toDataURL('image/png'); // Convert canvas to image
+      const link = document.createElement('a');
+      link.href = image;
+      link.download = 'qrcode.png'; // Set the download name
+      link.click(); // Trigger the download
     }
-  }
-
-  const handleEmailSubmit = async () => {
-    try {
-      const response = await fetch('/api/send-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, shortUrl }),
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to send email')
-      }
-
-      console.log(`Email sent to: ${email}`)
-    } catch (error) {
-      console.error('Error sending email:', error)
-    }
-  }
+  };
 
   return (
     <Card className="bg-gray-800 border border-gray-700">
@@ -113,7 +82,24 @@ export function UrlCard({ longUrl, shortUrl, alias }: UrlCardProps) {
           <p>New URL: {shortUrl}</p>
           <p>{shortUrl.length} characters</p>
         </div>
-        <div className="flex items-center mb-2">
+        <form
+            className="flex items-center mb-2"
+            onSubmit={async (event) => {
+              event.preventDefault();
+              const formData = new FormData(event.target as HTMLFormElement);
+              formData.append('email', email);
+              formData.append('shortUrl', shortUrl);
+              formData.append('longUrl', longUrl);
+              const { error } = await sendEmail(formData);
+
+              if (error) {
+                toast.error(error);
+                return;
+              }
+
+              toast.success("Email sent successfully!");
+            }}
+        >
           <Input
             type="email"
             placeholder="Enter your email"
@@ -124,12 +110,13 @@ export function UrlCard({ longUrl, shortUrl, alias }: UrlCardProps) {
           <Button
             variant="outline"
             size="sm"
-            onClick={handleEmailSubmit}
+            type="submit"
             className="border-gray-600 hover:bg-gray-700 hover:text-white"
           >
             Send
           </Button>
-        </div>
+        </form>
+        <ToastContainer />
         <Button
           variant="outline"
           size="sm"
@@ -145,7 +132,7 @@ export function UrlCard({ longUrl, shortUrl, alias }: UrlCardProps) {
             <Button
               variant="outline"
               size="sm"
-              onClick={downloadQRCode}
+              onClick={handleDownload}
               className="mt-2 border-gray-600 hover:bg-gray-700 hover:text-white"
             >
               <Download className="h-4 w-4 mr-2" />

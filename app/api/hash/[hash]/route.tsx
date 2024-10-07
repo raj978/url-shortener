@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
         const campaign = await collection.findOne({ uid: hash });
 
         if (campaign) {
-            console.log("This is the url" ,campaign.link);
+            // console.log("This is the url" ,campaign.link);
             return NextResponse.json({ link: campaign.link }, { status: 200 });
         } else {
             return NextResponse.json({ message: 'Requested link not found' }, { status: 404 });

@@ -41,15 +41,15 @@ export default function EnhancedUrlShortener() {
             }
 
             const out = await response.json();
-            console.log(out.data.data.shortUrl);
-            console.log("data:", out);
+            // console.log(out.data.data.shortUrl);
+            // console.log("data:", out);
             const newShortUrl: ShortUrl = {
                 id: Date.now().toString(),
                 longUrl,
                 shortUrl: out.data.data.shortUrl,
                 alias: alias || '',
             }
-            console.log("newShortUrl:", newShortUrl);
+            // console.log("newShortUrl:", newShortUrl);
             setShortUrls(prev => [newShortUrl, ...prev]);
         } catch (error) {
             console.error('Error creating short URL:', error);
